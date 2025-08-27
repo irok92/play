@@ -1,0 +1,9 @@
+---
+CompileFlags:
+  Add:
+    - '-std=c++20'
+    - '-I./'
+    - '-I./backends/sdl3/'
+    - '-I./3rdparty/SDL3/include/'
+Diagnostics:
+  UnusedIncludes: None
