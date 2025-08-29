@@ -16,7 +16,7 @@ using mod_fn_unload = void (*)();
 using mod_fn_update = void (*)();
 
 
-struct mod
+struct shared_object
 {
     char name[256];
     void* library;
@@ -27,8 +27,8 @@ struct mod
 
     uint64_t build_started;
     process build_process;
-    
-    
+
+
 };
 
 struct api_mod

@@ -1,6 +1,9 @@
 #pragma once
 
 #include <assert.h>
+#include <stddef.h>
+#include <stdarg.h>
+#include <inttypes.h>
 
 #define inline_eval(...) ([&](){ __VA_ARGS__ })()
 
@@ -24,7 +27,3 @@
 #ifndef PLAY_USE_DEFAULT_APIS
 #define PLAY_USE_DEFAULT_APIS 1
 #endif
-
-
-
-

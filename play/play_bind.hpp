@@ -10,7 +10,7 @@ struct binds
     api_log log;
     api_mem mem;
     api_mod mod;
-    context* context;
+    context* play_context;
     test_context* root_tests;
     test_context* current_tests;
 };
@@ -21,7 +21,7 @@ get_binds(binds* b)
     b->log = g_log;
     b->mem = g_mem;
     b->mod = g_mod;
-    b->context = get_context();
+    b->play_context = get_context();
     b->root_tests = &g_root_tests;
     b->current_tests = g_test;
 }
@@ -34,7 +34,7 @@ set_binds(binds* b)
     g_mod = b->mod;
     g_test = b->current_tests;
     g_root_tests = *b->root_tests;
-    set_context(b->context);
+    set_context(b->play_context);
 }
 
 }

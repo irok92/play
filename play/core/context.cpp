@@ -110,11 +110,11 @@ bool
 load_module(const char *name)
 {
     PLAY_ASSERT(g_play != nullptr);
-    mod& m = g_play->mod;
+    shared_object& m = g_play->mod;
 
     bool succeeded = true;
 
-    strncpy_s(m.name, name, sizeof(m.name) - 1);
+    strncpy(m.name, name, sizeof(m.name) - 1);
     m.library = g_mod.load(m.name);
 
     if(!m.library)
@@ -183,7 +183,7 @@ bool
 unload_module(const char *name)
 {
     PLAY_ASSERT(g_play != nullptr);
-    mod& m = g_play->mod;
+    shared_object& m = g_play->mod;
 
     if(m.library != nullptr)
     {

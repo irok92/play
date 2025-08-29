@@ -21,7 +21,7 @@ SDL_AppInit(void** state, int argc, char** argv)
         return SDL_APP_FAILURE;
     }
 
-    if(!play::load_module("play_tests"))
+    if(!play::load_module("./libplay_tests.so"))
     {
         return SDL_APP_FAILURE;
     }
@@ -39,11 +39,11 @@ SDL_AppIterate(void* state)
     if(SDL_GetTicks() > timestamp + 5000)
     {
         timestamp = SDL_GetTicks();
-        play::log_info("%llu seconds have passed!", (timestamp / 1000));
+        play::log_info("%lu seconds have passed!", (timestamp / 1000));
     }
 
     play::update();
-    
+
     return play::is_running() ? SDL_APP_CONTINUE : SDL_APP_SUCCESS;
 }
 
@@ -59,6 +59,8 @@ SDL_AppEvent(void* state, SDL_Event* event)
     play_sdl3::push_event(event);
     return SDL_APP_CONTINUE;
 }
+
+
 
 void
 SDL_AppQuit(void* state, SDL_AppResult result)

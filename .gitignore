@@ -1,3 +1,4 @@
 bin/*
 3rdparty/*
 *.exe
+build/*

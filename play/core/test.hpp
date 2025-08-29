@@ -20,10 +20,10 @@ enum test_status
 struct test_context
 {
     const char* name = nullptr;
-    const char* test_descriptions[MAX_TESTS_PER_CASE] = {};
-    test_status test_status[MAX_TESTS_PER_CASE] = {};
-    int test_succeeded = 0;
-    int test_count = 0;
+    const char* descriptions[MAX_TESTS_PER_CASE] = {};
+    test_status status[MAX_TESTS_PER_CASE] = {};
+    int succeeded = 0;
+    int count = 0;
     int depth = 0;
 };
 
@@ -38,7 +38,7 @@ test_case(const char* name, TFunc func)
     test_context* old_test = g_test;
     test_context group;
     group.name = name;
-    group.test_count = 0;
+    group.count = 0;
 
     group.depth = g_test ? g_test->depth + 1 : 0;
     g_test = &group;
@@ -59,12 +59,12 @@ test_case(const char* name, TFunc func)
     catch (...)
     {
         play::log_error("Unknown exception caught");
-        g_test->test_status[g_test->test_count] = TEST_STATUS_EXCEPTION;
+        g_test->status[g_test->count] = TEST_STATUS_EXCEPTION;
     }
 
 
     // Summerize group
-    play::log_info("%*s[case] '%s' (%i/%i) passed", group.depth * 4, "", name, g_test->test_succeeded, g_test->test_count);
+    play::log_info("%*s[case] '%s' (%i/%i) passed", group.depth * 4, "", name, g_test->succeeded, g_test->count);
 
     g_test = old_test;
 }
@@ -75,17 +75,17 @@ test_assert(const char* name, bool condition)
     if (!condition)
     {
         play::log_error("%*s[assert] '%s' failed", (g_test->depth + 1) * 4, "", name);
-        g_test->test_status[g_test->test_count] = TEST_STATUS_FAILED;
+        g_test->status[g_test->count] = TEST_STATUS_FAILED;
     }
     else
     {
         play::log_debug("%*s[assert] '%s' passed", (g_test->depth + 1) * 4, "", name);
-        g_test->test_status[g_test->test_count] = TEST_STATUS_SUCCESS;
-        g_test->test_succeeded++;
+        g_test->status[g_test->count] = TEST_STATUS_SUCCESS;
+        g_test->succeeded++;
     }
 
-    g_test->test_descriptions[g_test->test_count] = name;
-    g_test->test_count++;
+    g_test->descriptions[g_test->count] = name;
+    g_test->count++;
 }
 
 }

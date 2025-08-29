@@ -10,7 +10,7 @@ namespace play
 struct context
 {
     bool should_close = false;
-    mod mod;
+    shared_object mod;
 };
 
 extern context* g_play;
@@ -30,8 +30,3 @@ bool load_module(const char* name);
 bool unload_module(const char* name);
 
 }
-
-
-
-
-

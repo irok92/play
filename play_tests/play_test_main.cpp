@@ -1,7 +1,6 @@
 #include "play/play_bind.hpp"
 
 extern "C"
-__declspec(dllexport)
 void
 play_mod_bind(play::binds* binds)
 {
@@ -10,7 +9,6 @@ play_mod_bind(play::binds* binds)
 }
 
 extern "C"
-__declspec(dllexport)
 bool
 play_mod_load()
 {
@@ -33,19 +31,16 @@ play_mod_load()
 }
 
 extern "C"
-__declspec(dllexport)
 void
 play_mod_update()
 {
-    
+
     //play::close();
 }
 
 extern "C"
-__declspec(dllexport)
 void
 play_mod_unload()
 {
     play::log_info("Inside play_mod_unload");
 }
-

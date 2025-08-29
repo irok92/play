@@ -1,6 +1,9 @@
+#include "play/os/log.hpp"
 #include "play/play.hpp"
 
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_error.h>
+#include <SDL3/SDL_loadso.h>
 
 namespace play_sdl3
 {
@@ -23,7 +26,12 @@ api_log_format_v(play::log_level level, const char* format, va_list args)
 void*
 api_mod_load(const char* path)
 {
-    return static_cast<void*>(SDL_LoadObject(path));
+    SDL_SharedObject* so = SDL_LoadObject(path);
+    if(!so) {
+        play::log_error("Failed to load SDL_SharedObject %s:%s", path, SDL_GetError());
+    }
+
+    return static_cast<void*>(so);
 }
 
 void
@@ -35,7 +43,11 @@ api_mod_unload(void* lib)
 void*
 api_mod_get_function(void* lib, const char* address)
 {
-    return reinterpret_cast<void*>(SDL_LoadFunction(reinterpret_cast<SDL_SharedObject*>(lib), address));
+    SDL_FunctionPointer func = SDL_LoadFunction(reinterpret_cast<SDL_SharedObject*>(lib), address);
+    if(!func) {
+        play::log_error("Failed to load function %s:%s", address, SDL_GetError());
+    }
+    return reinterpret_cast<void*>(func);
 }
 
 void

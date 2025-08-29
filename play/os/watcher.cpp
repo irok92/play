@@ -1,6 +1,6 @@
 #include "play/play.hpp"
 
-
+#ifdef PLAY_PLATFORM_WIN32
 #define _WIN32_WINNT 0x0550
 #include <windows.h>
 
@@ -14,7 +14,7 @@
 #endif
 
 
-
+#endif
 namespace play
 {
 struct watcher;
@@ -22,6 +22,7 @@ struct watcher;
 // TODO: Add ifdefs for a Linux/Unix variant
 struct watch_instance
 {
+#ifdef PLAY_PLATFORM_WIN32Q
     OVERLAPPED overlapped;
     HANDLE dir_handle;
     LPARAM lparam;
@@ -32,6 +33,9 @@ struct watch_instance
     watch_id id;
     fn_watcher_callback callback;
     void* user_data;
+#else
+    // TODO: Unix style
+#endif
 };
 
 struct watcher
@@ -55,6 +59,7 @@ watcher_handle_action(
     void* user_data
 )
 {
+    #ifdef PLAY_PLATFORM_WIN32
     watch_action local_action = WATCH_ACTION_ADDED;
 
     switch(action)
@@ -90,6 +95,9 @@ watcher_handle_action(
     {
         play::log_warn("No callback was set for file_watcher %d", instance->id);
     }
+    #else
+    // TODO: Unix stile
+    #endif
 }
 
 void
@@ -102,7 +110,11 @@ watcher_init()
 void
 watcher_update()
 {
+    #ifdef PLAY_PLATFORM_WIN32
     DWORD result = MsgWaitForMultipleObjectsEx(0, NULL, 0, QS_ALLINPUT, MWMO_ALERTABLE);
+    #else
+        // Unix style
+    #endif
 }
 
 watch_id
@@ -124,11 +136,11 @@ watcher_watch(
     watch_id id = g_watcher->count;
     // Append count afterwards.
     g_watcher->count++;
-
+    #ifdef PLAY_PLATFORM_WIN32
     watch_instance* i = nullptr;
     size_t i_size = sizeof(*i);
     i = static_cast<watch_instance*>(HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, i_size));
-    *i = {};
+    *i = {};   #endif
     i->id = id;
     i->stop_now = false;
     i->callback = cb;
@@ -173,7 +185,7 @@ watcher_watch(
 
 
     log_info("Failed to open directory '%s'. Error: %lu", dir, GetLastError());
-
+   #endif
 
     return -1;
 }
@@ -195,7 +207,7 @@ watcher_unwatch(watch_id& id)
         log_warn("Couldn't free instance at id %i, was null.", id);
         return;
     }
-
+    #ifdef PLAY_PLATFORM_WIN32
     i->stop_now = true;
     CancelIo(i->dir_handle);
     watcher_refresh_dir(i, true);
@@ -211,8 +223,10 @@ watcher_unwatch(watch_id& id)
     HeapFree(GetProcessHeap(), 0, i);
     g_watcher->watchers[id] = nullptr;
     id = -1;
+    #endif
 }
 
+#ifdef PLAY_PLATFORM_WIN32
 void
 CALLBACK
 watcher_callback(
@@ -284,6 +298,7 @@ watcher_refresh_dir(watch_instance* i, bool _clear)
 
     return res != 0;
 }
+#endif
 
 void
 watcher_destroy()

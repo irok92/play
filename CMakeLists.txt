@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 3.20)
+
+project(play)
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(BUILD_SHARED_LIBS ON)
+message("${CMAKE_SOURCE_DIR}")
+include(${CMAKE_SOURCE_DIR}/3rdparty/SDL_shadercross/external/DirectXShaderCompiler/cmake/caches/PredefinedParams.cmake)
+set(SDLSHADERCROSS_SPIRVCROSS_SHARED OFF)
+set(SDLSHADERCROSS_VENDORED ON)
+add_subdirectory(3rdparty/SDL)
+add_subdirectory(3rdparty/SDL_shadercross)
+add_subdirectory(3rdparty/SDL_net)
+
+file(GLOB_RECURSE PLAY_SOURCES CMAKE_CONFIGURE_DEPENDS ./play/*.cpp ./play_sdl3/*.cpp examples/*.cpp)
+add_executable(play_sdl3 ${PLAY_SOURCES})
+target_include_directories(play_sdl3 PUBLIC ./)
+target_link_libraries(play_sdl3 PUBLIC SDL3::SDL3 SDL3_shadercross::SDL3_shadercross)
+
+file(GLOB_RECURSE PLAY_TEST_SOURCES CMAKE_CONFIGURE_DEPENDS ./play/*.cpp ./play_sdl3/*.cpp play_tests/*.cpp)
+add_library(play_tests SHARED ${PLAY_TEST_SOURCES})
+target_include_directories(play_tests PUBLIC ./)
+target_link_libraries(play_tests PUBLIC SDL3::SDL3)
